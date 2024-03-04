@@ -1,5 +1,10 @@
-const data = require("./data.json");
+import fs from "fs";
 
+const jsonData = fs.readFileSync(
+  "C:/Users/user/OneDrive/سطح المكتب/databases-cohort46/Week3/homework/mongodb/data.json",
+  "utf-8"
+);
+const data = JSON.parse(jsonData);
 /**
  * This function will drop and recreate the collection of sample data in our csv file.
  * By doing this we ensure that your functions are working on the same data, very similar to how you would set up a test environment.
@@ -46,6 +51,4 @@ const seedDatabase = async (client) => {
   }
 };
 
-module.exports = {
-  seedDatabase,
-};
+export default seedDatabase;
