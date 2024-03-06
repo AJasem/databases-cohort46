@@ -37,25 +37,55 @@ connection.connect((err) => {
       room_no INT,
       FOREIGN KEY (room_no) REFERENCES Room(room_no)
     );
+    create table if not exists Meeting_invitee (
+      meeting_no int,
+      invitee_no int,
+      primary key (meeting_no, invitee_no),
+      foreign key (meeting_no) references Meeting(meeting_no),
+      foreign key (invitee_no) references Invitee(invitee_no)
+    );
+   
   `;
 
   connection.query(query, (err, results) => {
     if (err) throw err;
 
     console.log("Database and tables created successfully");
+  });
 
-    for (let i = 1; i <= 5; i++) {
-      const insertQuery = `
-        INSERT INTO Invitee VALUES (${i}, 'Invitee ${i}', 'Inviter ${i}');
-        INSERT INTO Room VALUES (${i}, 'Room ${i}', ${i});
-        INSERT INTO Meeting VALUES (${i}, 'Meeting ${i}', NOW(), DATE_ADD(NOW(), INTERVAL ${i} HOUR), ${i});
+  const insertQuery = `
+
+      INSERT INTO Invitee (invitee_no, invitee_name, invited_by)
+      VALUES
+        (1, 'John Doe', 'Manager'),
+        (2, 'Jane Smith', 'Supervisor'),
+        (3, 'Bob Johnson', 'Colleague');
+      
+      
+      INSERT INTO Room (room_no, room_name, floor_number)
+      VALUES
+        (101, 'Conference Room A', 1),
+        (102, 'Meeting Room B', 2),
+        (103, 'Board Room', 3);
+      
+        INSERT INTO Meeting (meeting_no, meeting_title, starting_time, ending_time, room_no)
+        VALUES
+          (1, 'Team Meeting', '2024-03-06 10:00:00', '2024-03-06 12:00:00', 101),
+          (2, 'Project Kickoff', '2024-03-07 14:00:00', '2024-03-07 16:00:00', 102);
+        
+      INSERT INTO Meeting_invitee (meeting_no, invitee_no)
+      VALUES
+        (1, 1),
+        (1, 2),
+        (2, 3);
+      
+      
+      
       `;
 
-      connection.query(insertQuery, (err, results) => {
-        if (err) throw err;
-      });
-    }
-
-    connection.end();
+  connection.query(insertQuery, (err, results) => {
+    if (err) throw err;
+    console.log("Data inserted successfully");
   });
+  connection.end();
 });
